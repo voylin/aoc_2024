@@ -1,55 +1,43 @@
 extends Control
 
-const PATH: String = "res://01/test_data.txt"
+
 
 func _ready() -> void:
-	part_one()
-	part_two()
+	print("Day 01 - Part one result: ", part_one())
+	print("Day 01 - Part two result: ", part_two())
 
 
-func part_one() -> void:
-	var left_list: PackedInt64Array = []
-	var right_list: PackedInt64Array = []
+func part_one() -> int:
+	var data: Array[PackedInt64Array] = _read_data()
 	var total: int = 0
 
-	var file: FileAccess = FileAccess.open(PATH, FileAccess.READ)
-	var line: PackedStringArray = file.get_line().split("   ")
+	data[0].sort()
+	data[1].sort()
 
-	while !file.eof_reached():
-		left_list.append(int(line[0]))
-		right_list.append(int(line[1]))
-		line = file.get_line().split("   ")
-
-	left_list.sort()
-	right_list.sort()
-
-	for i: int in left_list.size():
-		total += abs(left_list[i] - right_list[i])
-	
-	print("Part one result: ", total)
+	for i: int in data[0].size():
+		total += abs(data[0][i] - data[1][i])
+	return total
 	
 
-func part_two() -> void:
-	var left_list: PackedInt64Array = []
-	var right_list: PackedInt64Array = []
+func part_two() -> int:
+	var data: Array[PackedInt64Array] = _read_data()
 	var total: int = 0 # Similarity score 
-	var times: int = 0 # Times that a number can be found
 
-	var file: FileAccess = FileAccess.open(PATH, FileAccess.READ)
+	for number: int in data[0]:
+		total += number * data[1].count(number)
+	return total
+
+
+func _read_data() -> Array[PackedInt64Array]:
+	var data: Array[PackedInt64Array] = [[],[]]
+
+	var file: FileAccess = FileAccess.open("res://01/test_data.txt", FileAccess.READ)
 	var line: PackedStringArray = file.get_line().split("   ")
 
 	while !file.eof_reached():
-		left_list.append(int(line[0]))
-		right_list.append(int(line[1]))
+		data[0].append(int(line[0]))
+		data[1].append(int(line[1]))
 		line = file.get_line().split("   ")
 
-	for i: int in left_list.size():
-		times = 0
+	return data
 
-		for x: int in left_list.size():
-			if left_list[i] == right_list[x]:
-				times += 1
-
-		total += left_list[i] * times
-
-	print("Part two result: ", total)
