@@ -26,7 +26,7 @@ func _get_muls(a_line: String) -> PackedStringArray:
 	var l_data: PackedStringArray = []
 	var l_regex: RegEx = RegEx.new()
 
-	l_regex.compile("mul\\(([0-9]|[1-9][0-9]|[1-9][0-9][0-9]),([0-9]|[1-9][0-9]|[1-9][0-9][0-9])\\)")
+	l_regex.compile("mul\\([0-9]+\\,[0-9]+\\)")
 
 	for l_result: RegExMatch in l_regex.search_all(a_line):
 		l_data.append(l_result.get_string())
