@@ -50,7 +50,6 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 script = ExtResource("1_0oghq")
-day = 2
 
 [node name="Background" type="TextureRect" parent="."]
 layout_mode = 1
@@ -89,12 +88,13 @@ label_settings = SubResource("LabelSettings_ymo18")
 horizontal_alignment = 1
 
 [node name="PartOneBox" type="PanelContainer" parent="VBox"]
-custom_minimum_size = Vector2(300, 100)
+custom_minimum_size = Vector2(300, 110)
 layout_mode = 2
 size_flags_horizontal = 4
 
 [node name="VBox" type="VBoxContainer" parent="VBox/PartOneBox"]
 layout_mode = 2
+alignment = 1
 
 [node name="TitleLabel" type="Label" parent="VBox/PartOneBox/VBox"]
 layout_mode = 2
@@ -105,19 +105,20 @@ horizontal_alignment = 1
 [node name="PartOneValue" type="RichTextLabel" parent="VBox/PartOneBox/VBox"]
 layout_mode = 2
 focus_mode = 2
-theme_override_font_sizes/normal_font_size = 20
+theme_override_font_sizes/normal_font_size = 28
 bbcode_enabled = true
 text = "[center]1234567890"
 fit_content = true
 selection_enabled = true
 
 [node name="PartTwoBox" type="PanelContainer" parent="VBox"]
-custom_minimum_size = Vector2(300, 100)
+custom_minimum_size = Vector2(300, 110)
 layout_mode = 2
 size_flags_horizontal = 4
 
 [node name="VBox" type="VBoxContainer" parent="VBox/PartTwoBox"]
 layout_mode = 2
+alignment = 1
 
 [node name="TitleLabel" type="Label" parent="VBox/PartTwoBox/VBox"]
 layout_mode = 2
@@ -128,7 +129,7 @@ horizontal_alignment = 1
 [node name="PartTwoValue" type="RichTextLabel" parent="VBox/PartTwoBox/VBox"]
 layout_mode = 2
 focus_mode = 2
-theme_override_font_sizes/normal_font_size = 20
+theme_override_font_sizes/normal_font_size = 28
 bbcode_enabled = true
 text = "[center]1234567890"
 fit_content = true

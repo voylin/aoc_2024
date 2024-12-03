@@ -1,5 +1,14 @@
 extends Node
 
+func get_full_string(a_file_path: String) -> String:
+	var l_string: String = ""
+
+	for l_line: String in get_string_array(a_file_path):
+		l_string += l_line
+
+	return l_string
+
+
 
 func get_string_array(a_file_path: String) -> PackedStringArray:
 	var data: PackedStringArray = []

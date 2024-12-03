@@ -7,24 +7,8 @@ func part_one() -> int:
 	var l_data: Array[PackedInt64Array] = Data.get_packed_int_array(PATH, " ")
 	var l_total: int = 0
 
-	for l_index: int in l_data.size():
-		var l_positive: bool = true
-		var l_skip: bool = false
-
-		if l_data[l_index][0] > l_data[l_index][1]:
-			l_positive = false
-
-		for i: int in l_data[l_index].size() - 1:
-			var l_value: int = l_data[l_index][i + 1] - l_data[l_index][i]
-
-			if (l_positive and l_value < 0) or (!l_positive and l_value > 0):
-				l_skip = true
-				break
-			if absi(l_value) > 3 or l_value == 0:
-				l_skip = true
-				break
-
-		if !l_skip:
+	for l_entry: PackedInt64Array in l_data:
+		if _check_normal(l_entry):
 			l_total += 1
 	
 	return l_total
