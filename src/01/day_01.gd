@@ -6,7 +6,6 @@ func part_one() -> int:
 	var data: Array[PackedInt64Array] = _get_split_data()
 	var total: int = 0
 
-
 	for id: int in data[0].size():
 		total += abs(data[0][id] - data[1][id])
 

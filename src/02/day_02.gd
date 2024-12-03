@@ -1,37 +1,21 @@
 extends Control
 
-var data: Array[PackedInt64Array] = []
-var total: int = 0
-
-
-func _ready() -> void:
-	print("Day 02 - Part one result: ", part_one())
-	total = 0
-	print("Day 02 - Part two result: ", part_two())
+const PATH: String = "res://02/data.txt"
 
 
 func part_one() -> int:
-	var l_file: FileAccess = FileAccess.open("res://02/data.txt", FileAccess.READ)
-	var l_line: PackedStringArray = l_file.get_line().split(' ')
+	var l_data: Array[PackedInt64Array] = Data.get_packed_int_array(PATH, " ")
+	var l_total: int = 0
 
-	while !l_file.eof_reached():
-		var l_temp: PackedInt64Array = []
-
-		for l_string: String in l_line:
-			l_temp.append(int(l_string))
-
-		data.append(l_temp)
-		l_line = l_file.get_line().split(' ')
-
-	for l_index: int in data.size():
+	for l_index: int in l_data.size():
 		var l_positive: bool = true
 		var l_skip: bool = false
 
-		if data[l_index][0] > data[l_index][1]:
+		if l_data[l_index][0] > l_data[l_index][1]:
 			l_positive = false
 
-		for i: int in data[l_index].size() - 1:
-			var l_value: int =  data[l_index][i + 1] - data[l_index][i]
+		for i: int in l_data[l_index].size() - 1:
+			var l_value: int = l_data[l_index][i + 1] - l_data[l_index][i]
 
 			if (l_positive and l_value < 0) or (!l_positive and l_value > 0):
 				l_skip = true
@@ -41,15 +25,17 @@ func part_one() -> int:
 				break
 
 		if !l_skip:
-			total += 1
+			l_total += 1
 	
-	return total
+	return l_total
 
 
 func part_two() -> int:
-	for l_array: PackedInt64Array in data:
+	var l_total: int = 0
+
+	for l_array: PackedInt64Array in Data.get_packed_int_array(PATH, " "):
 		if _check_normal(l_array):
-			total += 1
+			l_total += 1
 			continue
 
 		for i:int in l_array.size():
@@ -57,10 +43,10 @@ func part_two() -> int:
 			l_temp.remove_at(i)
 
 			if _check_normal(l_temp):
-				total += 1
+				l_total += 1
 				break
 
-	return total
+	return l_total
 
 
 func _check_normal(a_array: PackedInt64Array) -> bool:
