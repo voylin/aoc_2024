@@ -135,6 +135,10 @@ text = "[center]1234567890"
 fit_content = true
 selection_enabled = true
 
+[node name="Spacer" type="Control" parent="VBox"]
+custom_minimum_size = Vector2(0, 300)
+layout_mode = 2
+
 [node name="Days" type="Control" parent="."]
 anchors_preset = 0
 offset_right = 40.0
