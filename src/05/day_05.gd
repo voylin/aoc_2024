@@ -27,7 +27,7 @@ func _get_rules() -> Array[PackedInt64Array]:
 	l_text = l_text.split('\n\n')[0]
 	for l_line: String in l_text.split('\n'):
 		if l_line != "":
-			l_data.append([l_line.split('|')[0], l_line.split('|')[1]] as PackedInt64Array)
+			l_data.append(l_line.split('|') as Array as PackedInt64Array)
 
 	return l_data
 
@@ -60,13 +60,11 @@ func _get_updates(a_rules: Array[PackedInt64Array], a_pages: Array[PackedInt64Ar
 			l_check.append(l_page)
 
 			for l_rule: PackedInt64Array in a_rules:
-				if l_rule[0] == l_page:
-					if l_rule[1] in l_check:
-						l_break = true
-						break
-		if a_correct and !l_break:
-			l_updates.append(a_pages[l_id])
-		elif !a_correct and l_break:
+				if l_rule[0] == l_page and l_rule[1] in l_check:
+					l_break = true
+					break
+
+		if (a_correct and !l_break) or (!a_correct and l_break):
 			l_updates.append(a_pages[l_id])
 
 	return l_updates
