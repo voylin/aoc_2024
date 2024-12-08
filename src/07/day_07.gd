@@ -15,7 +15,7 @@ func part_one() -> int:
 		var l_nums: PackedInt64Array = l_entry[1].strip_edges().split(' ') as Array
 		l_numbers.append(_total_possible(l_total, l_nums, ['+', '*']))
 
-	return _calculate_total(l_numbers)
+	return Utils.sum_array(l_numbers)
 
 
 func part_two() -> int:
@@ -28,30 +28,19 @@ func part_two() -> int:
 
 		l_numbers.append(_total_possible(l_total, l_nums, ['+', '*', '||']))
 
-	return _calculate_total(l_numbers)
-
-
-func _calculate_total(l_data: PackedInt64Array) -> int:
-	var l_total: int = 0
-
-	for i: int in l_data:
-		l_total += i
-
-	return l_total
+	return Utils.sum_array(l_numbers)
 
 
 func _total_possible(a_total: int, a_nums: PackedInt64Array, a_symbols: PackedStringArray) -> int:
 	# Return 0 if not possible, else total
-	for i: int in a_symbols.size() ** (a_nums.size() - 1):
+	for l_combination: PackedStringArray in Utils.get_combinations_array(a_nums.size() - 1, a_symbols):
 		var l_total: int = a_nums[0]
-		var l_value: int = i
 
-		for x: int in a_nums.size() - 1:
-			match a_symbols[l_value % a_symbols.size()]:
-				'+': l_total += a_nums[x+1]
-				'*': l_total *= a_nums[x+1]
-				'||': l_total = int("".join([l_total, a_nums[x+1]]))
-			l_value /= a_symbols.size()
+		for i: int in l_combination.size():
+			match l_combination[i]:
+				'+': l_total += a_nums[i+1]
+				'*': l_total *= a_nums[i+1]
+				'||': l_total = int("".join([l_total, a_nums[i+1]]))
 
 		if l_total == a_total:
 			return a_total
