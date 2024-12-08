@@ -14,7 +14,7 @@ func part_one() -> int:
 			_get_anti_pos(l_antinodes, l_antenna_freq, l_antenna_pos, l_data.size(), false)
 			
 	_clean_antinodes(l_antinodes, l_data.size())
-	_print_map(l_data, l_antinodes)
+#	_print_map(l_data, l_antinodes)
 
 	return l_antinodes.size()
 
@@ -29,7 +29,7 @@ func part_two() -> int:
 			_get_anti_pos(l_antinodes, l_antenna_freq, l_antenna_pos, l_data.size(), true)
 			
 	_clean_antinodes(l_antinodes, l_data.size())
-	_print_map(l_data, l_antinodes)
+#	_print_map(l_data, l_antinodes)
 
 	return l_antinodes.size()
 
@@ -74,15 +74,6 @@ func _get_anti_pos(a_antinodes: Array[Vector2i], a_freq: Array, a_pos: Vector2i,
 				break
 			if l_antinode_pos not in a_freq and l_antinode_pos not in a_antinodes:
 				a_antinodes.append(l_antinode_pos)
-	#	print("Original pos: ", a_pos)
-	#	print("antenna pos:  ", l_antenna_pos)
-	#	print("antinode pos: ", l_antinode_pos)
-	#	print("difference:   ", )
-	#	print()
-
-		# Check distance of node, and check oposites and save antinode
-		# Check if same frequency exists in a_freq, if yes, don't add
-		# else save new anti-node position
 
 
 func _clean_antinodes(a_antinodes: Array[Vector2i], a_size: int) -> void:
