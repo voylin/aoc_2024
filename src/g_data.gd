@@ -57,6 +57,21 @@ func get_packed_int_array(a_file_path: String, a_split: String) -> Array[PackedI
 	return new_data
 
 
+func get_packed_int32_array(a_file_path: String, a_split: String) -> Array[PackedInt32Array]:
+	var data: Array[PackedStringArray] = get_packed_string_array(a_file_path, a_split)
+	var new_data: Array[PackedInt32Array] = []
+
+	for line: PackedStringArray in data:
+		var new_line: PackedInt32Array = []
+
+		for entry: String in line:
+			new_line.append(int(entry))
+				
+		new_data.append(new_line)
+
+	return new_data
+
+
 func get_float_array(a_file_path: String) -> PackedFloat64Array:
 	var data: PackedStringArray = get_string_array(a_file_path)
 	var new_data: PackedFloat64Array = []
