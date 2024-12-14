@@ -1,13 +1,144 @@
 extends Node
 
-const PATH: String = "res://13/test_data.txt"
+const PATH: String = "res://13/data.txt"
 
+var machines: Array[Machine] = []
+var total: int = 0
 
 
 func part_one() -> int:
-	return 0
+	machines = get_machines(0)
+	total = 0
+
+	WorkerThreadPool.wait_for_group_task_completion(
+		WorkerThreadPool.add_group_task(calculate_machine, machines.size()))
+
+	return total
 
 
 func part_two() -> int:
-	return 0
+	machines = get_machines(10000000000000)
+	total = 0
 
+	WorkerThreadPool.wait_for_group_task_completion(
+		WorkerThreadPool.add_group_task(calculate_machine, machines.size(), 9, true))
+
+	return total
+
+
+func get_machines(a_prize_pos_addition: int) -> Array[Machine]:
+	var l_data: PackedStringArray = Data.get_string_array(PATH)
+	var l_arr: Array[Machine] = []
+
+	for l_line: String in l_data:
+		if "Button A" in l_line:
+			l_arr.append(Machine.new())
+			l_arr[-1].a_button = Vector2i(
+				int(l_line.split(' ')[-2].trim_prefix('X+').trim_suffix(',')),
+				int(l_line.split(' ')[-1].trim_prefix('Y+')))
+		elif "Button B" in l_line:
+			l_arr[-1].b_button = Vector2i(
+				int(l_line.split(' ')[-2].trim_prefix('X+').trim_suffix(',')),
+				int(l_line.split(' ')[-1].trim_prefix('Y+')))
+		elif "Prize:" in l_line:
+			l_arr[-1].prize = Vector2i(
+				int(l_line.split(' ')[-2].trim_prefix('X=').trim_suffix(',')) + a_prize_pos_addition,
+				int(l_line.split(' ')[-1].trim_prefix('Y=')) + a_prize_pos_addition)
+
+	return l_arr
+
+
+func calculate_machine(a_machine_id: int) -> void:
+	var l_machine: Machine = machines[a_machine_id]
+	var l_a_times: int = 0
+	var l_b_times: int = 0
+
+	var l_quick: int = 0
+	var l_a_value: int = l_machine.quick_a_button
+	var l_b_value: int = l_machine.quick_b_button
+	var l_quick_prize: int = l_machine.quick_prize
+	var l_step: int = 0
+
+	var l_total: int = 0
+
+	# Set l_a_times to maximum possible
+	l_a_times = mini((l_machine.prize.x / l_machine.a_button.x) + 1,
+					 (l_machine.prize.y / l_machine.a_button.y) + 1)
+	l_quick = l_a_times * l_a_value
+
+	while true:
+		if l_quick == l_quick_prize and l_machine.check_win(l_a_times, l_b_times):
+			l_total = l_machine.get_coins(l_a_times, l_b_times)
+			break
+		elif l_quick > l_quick_prize:
+			l_step = maxi(1, (l_quick - l_quick_prize) / l_a_value - 1)
+			l_a_times -= l_step
+			l_quick -= l_a_value * l_step
+			if l_a_times == -1:
+				break
+		else:
+			l_step = maxi(1, (l_quick_prize - l_quick) / l_b_value)
+			l_b_times += l_step
+			l_quick += l_b_value * l_step
+
+	# Set l_a_times to maximum possible
+	l_b_times = mini((l_machine.prize.x / l_machine.b_button.x) + 1,
+					 (l_machine.prize.y / l_machine.b_button.y) + 1)
+	l_quick = l_b_times * l_b_value
+
+	while true:
+		if l_quick == l_quick_prize and l_machine.check_win(l_a_times, l_b_times):
+			if l_total == 0:
+				total += l_machine.get_coins(l_a_times, l_b_times)
+			else:
+				total += mini(l_machine.get_coins(l_a_times, l_b_times), l_total)
+			
+			print("DONE")
+			return
+		elif l_quick > l_quick_prize:
+			l_step = maxi(1, (l_quick - l_quick_prize) / l_b_value - 1)
+			l_b_times -= l_step
+			l_quick -= l_b_value * l_step
+			if l_b_times == -1:
+				break
+		else:
+			l_step = maxi(1, (l_quick_prize - l_quick) / l_a_value)
+			l_a_times += l_step
+			l_quick += l_a_value * l_step
+
+	print("DONE")
+	total += l_total
+
+ 
+class Machine:
+	var a_button: Vector2i: set = set_a_button
+	var b_button: Vector2i: set = set_b_button
+	var prize: Vector2i: set = set_price
+
+	var quick_a_button: int
+	var quick_b_button: int
+	var quick_prize: int
+
+
+
+	func set_a_button(a_value: Vector2i) -> void:
+		a_button = a_value
+		quick_a_button = a_value.x + a_value.y
+
+
+	func set_b_button(a_value: Vector2i) -> void:
+		b_button = a_value
+		quick_b_button = a_value.x + a_value.y
+
+
+	func set_price(a_value: Vector2i) -> void:
+		prize = a_value
+		quick_prize = a_value.x + a_value.y
+
+
+	func check_win(a_times: int, b_times: int) -> bool:
+		return (a_times * a_button) + (b_times * b_button) == prize
+
+
+	func get_coins(a_times: int, b_times: int) -> int:
+		return (a_times * 3) + b_times
