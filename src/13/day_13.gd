@@ -1,9 +1,10 @@
 extends Node
 
-const PATH: String = "res://13/data.txt"
+const PATH: String = "res://13/test_data.txt"
 
 var machines: Array[Machine] = []
 var total: int = 0
+var mutex: Mutex = Mutex.new()
 
 
 func part_one() -> int:
@@ -21,7 +22,7 @@ func part_two() -> int:
 	total = 0
 
 	WorkerThreadPool.wait_for_group_task_completion(
-		WorkerThreadPool.add_group_task(calculate_machine, machines.size(), 9, true))
+		WorkerThreadPool.add_group_task(calculate_machine, machines.size()))
 
 	return total
 
@@ -49,7 +50,9 @@ func get_machines(a_prize_pos_addition: int) -> Array[Machine]:
 
 
 func calculate_machine(a_machine_id: int) -> void:
+	mutex.lock()
 	var l_machine: Machine = machines[a_machine_id]
+	mutex.unlock()
 	var l_a_times: int = 0
 	var l_b_times: int = 0
 
@@ -59,18 +62,23 @@ func calculate_machine(a_machine_id: int) -> void:
 	var l_quick_prize: int = l_machine.quick_prize
 	var l_step: int = 0
 
-	var l_total: int = 0
-
 	# Set l_a_times to maximum possible
+	mutex.lock()
 	l_a_times = mini((l_machine.prize.x / l_machine.a_button.x) + 1,
 					 (l_machine.prize.y / l_machine.a_button.y) + 1)
+	mutex.unlock()
 	l_quick = l_a_times * l_a_value
 
 	while true:
-		if l_quick == l_quick_prize and l_machine.check_win(l_a_times, l_b_times):
-			l_total = l_machine.get_coins(l_a_times, l_b_times)
-			break
-		elif l_quick > l_quick_prize:
+		if l_quick == l_quick_prize:
+			mutex.lock()
+			if l_machine.check_win(l_a_times, l_b_times):
+				mutex.unlock()
+				total += l_machine.get_coins(l_a_times, l_b_times)
+				print("DONE")
+				return
+			mutex.unlock()
+		if l_quick > l_quick_prize:
 			l_step = maxi(1, (l_quick - l_quick_prize) / l_a_value - 1)
 			l_a_times -= l_step
 			l_quick -= l_a_value * l_step
@@ -81,33 +89,7 @@ func calculate_machine(a_machine_id: int) -> void:
 			l_b_times += l_step
 			l_quick += l_b_value * l_step
 
-	# Set l_a_times to maximum possible
-	l_b_times = mini((l_machine.prize.x / l_machine.b_button.x) + 1,
-					 (l_machine.prize.y / l_machine.b_button.y) + 1)
-	l_quick = l_b_times * l_b_value
-
-	while true:
-		if l_quick == l_quick_prize and l_machine.check_win(l_a_times, l_b_times):
-			if l_total == 0:
-				total += l_machine.get_coins(l_a_times, l_b_times)
-			else:
-				total += mini(l_machine.get_coins(l_a_times, l_b_times), l_total)
-			
-			print("DONE")
-			return
-		elif l_quick > l_quick_prize:
-			l_step = maxi(1, (l_quick - l_quick_prize) / l_b_value - 1)
-			l_b_times -= l_step
-			l_quick -= l_b_value * l_step
-			if l_b_times == -1:
-				break
-		else:
-			l_step = maxi(1, (l_quick_prize - l_quick) / l_a_value)
-			l_a_times += l_step
-			l_quick += l_a_value * l_step
-
 	print("DONE")
-	total += l_total
 
  
 class Machine:
